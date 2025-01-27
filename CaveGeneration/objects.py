@@ -1,7 +1,5 @@
 import json
-
-from ipyvuetify import Treeview
-from networkx.algorithms.distance_measures import radius
+import random
 
 from config import *
 import terrain
@@ -49,7 +47,22 @@ def place_chests():
                                 # Add the cell's coordinates and solidity to the list
                                 has_chest = has_chest or chest_grid[x + y * w]
 
-                chest_grid[i + j * w] = is_suitable and not has_chest
+                if is_suitable and not has_chest:
+                    chest_grid[i + j * w] = terrain.tile_set["CHEST"]
+
+                # if it it a chest it has chance to spawn little bags
+                radius = 1
+                for x in range(i - radius, i + radius + 1):
+                    for y in range(j - radius, j + radius + 1):
+                        # Check if the cell is within the grid bounds
+                        if (0 <= x < w) and (0 <= y < h):
+                            # Calculate the distance from the center cell (x, y)
+                            distance = max(abs(x - i), abs(y - j))
+                            # If the tile is in distance and the origin is a chest
+                            if distance <= radius and chest_grid[i + j * w] and not terrain.is_solid(x, y):
+                                # Probabiliry to spawn a bag
+                                if random.random() < 0.05:
+                                    chest_grid[x + y * w] = terrain.tile_set["BAG"]
 
     return chest_grid
 

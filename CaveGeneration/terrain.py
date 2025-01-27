@@ -97,9 +97,12 @@ def preload():
     # Objects
     # Load chest texture
     tile_set["CHEST"] = pygame.image.load("textures/chest.png")
+    tile_set["BAG"] = pygame.image.load("textures/bag.png")
 
 def load_tiles(tile_name: str):
     tile_set[tile_name] = pygame.image.load("textures/Tile_" + str(tile_name) + ".png").convert_alpha()
+    # Alpha can be modified for future implementations
+    tile_set[tile_name].set_alpha(255)
 
 def to_tile_set():
     global tile_map

@@ -38,9 +38,12 @@ def draw(screen):
             screen.blit(pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE)), (i * TILE_SIZE, j * TILE_SIZE))
 
             # Draw chests
-            if chest_grid[i + j * w]:
+            if chest_grid[i + j * w] == terrain.tile_set["CHEST"]:
                 chest_img = terrain.tile_set["CHEST"]
                 screen.blit(pygame.transform.scale(chest_img, (TILE_SIZE, TILE_SIZE)), (i * TILE_SIZE, j * TILE_SIZE))
+            elif chest_grid[i + j * w] == terrain.tile_set["BAG"]:
+                bag_img = terrain.tile_set["BAG"]
+                screen.blit(pygame.transform.scale(bag_img, (TILE_SIZE, TILE_SIZE)), (i * TILE_SIZE, j * TILE_SIZE))
 
     # Draw the save button to the right of the grid
     save_button = pygame.Rect(GRID_WIDTH + 10, (WINDOW_HEIGHT - BUTTON_HEIGHT) // 2, BUTTON_WIDTH, BUTTON_HEIGHT)
