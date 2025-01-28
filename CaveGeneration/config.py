@@ -12,6 +12,11 @@ RADIUS = int(w/10) # Radius for chest to spawn
 CHEST_PROB = 0.1 # Probability for chest to spawn
 BAG_PROB = 0.05 # Probability for bags to spawn
 
+# Monsters Parameters
+MAX_MONSTERS = 5
+MONSTER_RADIUS = 2 # Radius for monster to spawn
+MONSTER_PROB = 0.3 # Probability to spawn a monster near chests
+
 # Window sizes
 BUTTON_WIDTH, BUTTON_HEIGHT = 160, 40  # Size of the button
 WINDOW_WIDTH = GRID_WIDTH + BUTTON_WIDTH + 20  # Total window width (grid + button + padding)

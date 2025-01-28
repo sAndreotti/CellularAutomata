@@ -29,6 +29,10 @@ def preload():
     tile_set["CHEST"] = pygame.image.load("textures/chest.png")
     tile_set["BAG"] = pygame.image.load("textures/bag.png")
 
+    # Monsters
+    # Load monster texture
+    tile_set["MONSTER"] = pygame.image.load("textures/monster.png")
+
 def load_tiles(tile_name: str):
     global alpha
     tile_set[tile_name] = pygame.image.load("textures/Tile_" + str(tile_name) + ".png").convert_alpha()

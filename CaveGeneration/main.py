@@ -1,9 +1,9 @@
 import json
 import random
-from turtledemo.sorting_animate import show_text
 
 import pygame
 import terrain
+from CaveGeneration.monsters import save_monsters_to_json, monster_grid, place_monsters
 from config import *
 from CaveGeneration.objects import place_chests, save_chests_to_json
 
@@ -50,6 +50,10 @@ def draw(screen):
                 bag_img = terrain.tile_set["BAG"]
                 screen.blit(pygame.transform.scale(bag_img, (TILE_SIZE, TILE_SIZE)), (i * TILE_SIZE, j * TILE_SIZE))
 
+            if monster_grid[i +j * w] == terrain.tile_set["MONSTER"]:
+                monster_img = terrain.tile_set["MONSTER"]
+                screen.blit(pygame.transform.scale(monster_img, (TILE_SIZE, TILE_SIZE)), (i * TILE_SIZE, j * TILE_SIZE))
+
     # Draw the save button to the right of the grid
     save_button = pygame.Rect(GRID_WIDTH + 10, (WINDOW_HEIGHT - BUTTON_HEIGHT) // 2, BUTTON_WIDTH, BUTTON_HEIGHT)
     pygame.draw.rect(screen, (65, 53, 102), save_button)
@@ -71,13 +75,26 @@ def draw(screen):
     pygame.display.flip()
 
 def save_grid_to_json():
-    layers = [tile_list("Layer_0"), save_chests_to_json()]
+    layers = [tile_list("Layer_0"), save_chests_to_json(), save_monsters_to_json()]
 
     # If it is enabled save also previous layer
     if DEPTH:
-        layers.append(tile_list("Layer_2"))
+        layer = {
+            "name": "Layer_10",
+            "tiles": []
+        }
+        for j in range(h):
+            for i in range(w):
+                tile_id = terrain.old_tile_map[i + j * w]
+                layer["tiles"].append({
+                    "id": str(tile_id),
+                    "x": i,
+                    "y": j
+                })
+        layers.append(layer)
 
-    with open("map.json", "w") as f:
+
+    with open("output/map.json", "w") as f:
         json.dump({"layers": layers}, f, indent=4)
 
     print("Saved grid to map.json")
@@ -101,11 +118,11 @@ def tile_list(layer_name):
 def save_image(screen):
     # Save only the grid area (not the button) as an image file
     grid_surface = screen.subsurface(pygame.Rect(0, 0, GRID_WIDTH, GRID_HEIGHT))
-    pygame.image.save(grid_surface, "saved_image.png")
-    print("Image saved as saved_image.png")
+    pygame.image.save(grid_surface, "output/map.png")
+    print("Image saved as map.png")
 
 def main():
-    global chest_grid, show_text
+    global chest_grid, show_text, monster_grid
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption("Cellular Automata Cave Generation")
@@ -133,11 +150,11 @@ def main():
                         WINDOW_HEIGHT - BUTTON_HEIGHT) // 2 + (2*BUTTON_HEIGHT):
                     print("Saving map...")
                     save_grid_to_json()
-                    #save_chests_to_json()
                 else:
                     terrain.iterate_tiles()
                     terrain.to_tile_set()
                     chest_grid = place_chests()
+                    monster_grid = place_monsters(chest_grid)
 
                     if actual_walls == terrain.wall_count():
                         show_text = True
