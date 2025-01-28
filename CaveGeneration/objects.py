@@ -4,18 +4,18 @@ import random
 from config import *
 import terrain
 
-GROUND_BONES = 109
-GROUND_STONE = 107
-GROUND = 45
-VOID = 30
-ISOLATED = 11
+chest_grid = [False] * (w * h)
 
 def place_chests():
-    chest_grid = [False] * (w * h)  # Initialize chest grid
+    global chest_grid
+    chest_grid = [False] * (w * h)  # Initialize new chest grid
+
     for j in range(h):
         for i in range(w):
-            # Check if the tile is ground and not already a chest
+            # Check if the tile is ground and not already occupied
             if terrain.tile_map[i + j * w] in [GROUND, GROUND_BONES, GROUND_STONE] and not chest_grid[i + j * w]:
+
+                # CHEST PLACING
                 is_suitable = True
 
                 # Check if away from walls
@@ -50,7 +50,8 @@ def place_chests():
                 if is_suitable and not has_chest:
                     chest_grid[i + j * w] = terrain.tile_set["CHEST"]
 
-                # if it it a chest it has chance to spawn little bags
+                # BAG PLACING
+                # if it is a chest, then it has chance to spawn little bags
                 radius = 1
                 for x in range(i - radius, i + radius + 1):
                     for y in range(j - radius, j + radius + 1):
@@ -60,28 +61,34 @@ def place_chests():
                             distance = max(abs(x - i), abs(y - j))
                             # If the tile is in distance and the origin is a chest
                             if distance <= radius and chest_grid[i + j * w] and not terrain.is_solid(x, y):
-                                # Probabiliry to spawn a bag
-                                if random.random() < 0.05:
+                                # Probability to spawn a bag
+                                if random.random() < BAG_PROB:
                                     chest_grid[x + y * w] = terrain.tile_set["BAG"]
 
     return chest_grid
 
-def save_chests_to_json(chest_grid, filename="map.json"):
-    """
-    Saves the chest locations to a JSON file.
-    """
+def save_chests_to_json():
+    global chest_grid
     chest_layer = {
-        "name": "Chests",
+        "name": "Layer_1",
         "tiles": []
     }
     for j in range(h):
         for i in range(w):
-            if chest_grid[i + j * w]:
+            # Add Chests
+            if chest_grid[i + j * w] == terrain.tile_set["CHEST"]:
                 chest_layer["tiles"].append({
                     "id": "CHEST",
                     "x": i,
                     "y": j
                 })
-    with open(filename, "w") as f:
-        json.dump({"layers": [chest_layer]}, f, indent=4)
-    print(f"Chest locations saved to {filename}")
+
+            # Add Bags
+            elif chest_grid[i + j * w] == terrain.tile_set["BAG"]:
+                chest_layer["tiles"].append({
+                    "id": "BAG",
+                    "x": i,
+                    "y": j
+                })
+
+    return chest_layer

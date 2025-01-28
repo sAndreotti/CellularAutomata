@@ -37,6 +37,11 @@ def draw(screen):
             img = terrain.tile_set[tile]
             screen.blit(pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE)), (i * TILE_SIZE, j * TILE_SIZE))
 
+            if terrain.old_tile_map and DEPTH:
+                tile = terrain.old_tile_map[i + j * w]
+                img = terrain.tile_set[tile]
+                screen.blit(pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE)), (i * TILE_SIZE, j * TILE_SIZE))
+
             # Draw chests
             if chest_grid[i + j * w] == terrain.tile_set["CHEST"]:
                 chest_img = terrain.tile_set["CHEST"]
@@ -66,9 +71,20 @@ def draw(screen):
     pygame.display.flip()
 
 def save_grid_to_json():
-    layers = []
+    layers = [tile_list("Layer_0"), save_chests_to_json()]
+
+    # If it is enabled save also previous layer
+    if DEPTH:
+        layers.append(tile_list("Layer_2"))
+
+    with open("map.json", "w") as f:
+        json.dump({"layers": layers}, f, indent=4)
+
+    print("Saved grid to map.json")
+
+def tile_list(layer_name):
     layer = {
-        "name": "Layer_0",
+        "name": layer_name,
         "tiles": []
     }
     for j in range(h):
@@ -79,11 +95,8 @@ def save_grid_to_json():
                 "x": i,
                 "y": j
             })
-    layers.append(layer)
-    with open("map.json", "w") as f:
-        json.dump({"layers": layers}, f, indent=4)
 
-    print("Saved grid to map.json")
+    return layer
 
 def save_image(screen):
     # Save only the grid area (not the button) as an image file
@@ -120,7 +133,7 @@ def main():
                         WINDOW_HEIGHT - BUTTON_HEIGHT) // 2 + (2*BUTTON_HEIGHT):
                     print("Saving map...")
                     save_grid_to_json()
-                    save_chests_to_json(chest_grid)
+                    #save_chests_to_json()
                 else:
                     terrain.iterate_tiles()
                     terrain.to_tile_set()

@@ -1,86 +1,16 @@
 import pygame
 import random
 
-from pandas.core.arrays.datetimes import objects_to_datetime64ns
-
 from config import *
-import objects
-
-# Set tile sprites
-GROUND_BONES = 109
-GROUND_STONE = 107
-GROUND = 45
-VOID = 30
-ISOLATED = 11
-
-CON_U = 24
-CON_U2 = 49
-CON_U3 = 65
-CON_U4 = 101
-
-CON_D = 13
-CON_D2 = 9
-CON_D3 = 79
-CON_D4 = 80
-CON_D5 = 81
-
-CON_L = 28
-CON_L2 = 53
-CON_L3 = 75
-CON_L4 = 89
-CON_L5 = 93
-CON_L6 = 99
-
-CON_R = 26
-CON_R2 = 51
-CON_R3 = 86
-CON_R4 = 91
-CON_R5 = 97
-
-CON_LR = 4
-CON_LR2 = 5
-CON_LR3 = 6
-CON_LR4 = 59
-CON_LR5 = 59
-CON_LR6 = 60
-CON_LR7 = 77
-CON_LR8 = 98
-
-CON_UD = 19
-CON_UD2 = 23
-CON_UD3 = 33
-CON_UD4 = 37
-CON_UD5 = 44
-CON_UD6 = 48
-
-CON_UR = 57
-CON_UL = 61
-
-CON_DR = 3
-CON_DL = 7
-
-CON_LUR = 27
-CON_LDR = 52
-CON_LUD = 87
-CON_URD = 88
-
-CON_LURD = 92
 
 # Initialize tiles and tile map
 tiles = []
 tile_map = []
+old_tile_map = []
 
 # Load textures
 tile_set = {}
-
-# Texture variants
-U_LIST = [CON_U, CON_U2, CON_U3, CON_U4]
-D_LIST = [CON_D, CON_D2, CON_D3, CON_D4, CON_D5]
-R_LIST = [CON_R, CON_R2, CON_R3, CON_R4, CON_R5]
-L_LIST = [CON_L, CON_L2, CON_L3, CON_L4, CON_L5, CON_L6]
-
-LR_LIST = [CON_LR, CON_LR2, CON_LR3, CON_LR4, CON_LR5, CON_LR6, CON_LR7, CON_LR8]
-UD_LIST = [CON_UD, CON_UD2, CON_UD3, CON_UD4, CON_UD5, CON_UD6]
+alpha = 255
 
 
 def preload():
@@ -100,12 +30,20 @@ def preload():
     tile_set["BAG"] = pygame.image.load("textures/bag.png")
 
 def load_tiles(tile_name: str):
+    global alpha
     tile_set[tile_name] = pygame.image.load("textures/Tile_" + str(tile_name) + ".png").convert_alpha()
     # Alpha can be modified for future implementations
-    tile_set[tile_name].set_alpha(255)
+    if DEPTH:
+        alpha = 128
+
+    tile_set[tile_name].set_alpha(alpha)
 
 def to_tile_set():
-    global tile_map
+    global tile_map, old_tile_map
+
+    if DEPTH:
+        old_tile_map = tile_map
+
     tile_map = []
     for j in range(h):
         for i in range(w):
@@ -136,6 +74,7 @@ def to_tile_set():
 
     # After generating the tile map, analyze and update wall types
     update_sprites()
+
 
 def update_sprites():
     for j in range(h):
@@ -261,7 +200,7 @@ def is_solid(x, y):
         return False
 
 def iterate_tiles():
-    global tiles
+    global tiles, old_tile_map
     new_tiles = []
     for j in range(h):
         for i in range(w):
@@ -273,6 +212,7 @@ def iterate_tiles():
                 num = num_walls_around(i, j)
                 new_tile = num >= N_WALL
                 new_tiles.append(new_tile)
+
     tiles = new_tiles
 
 def num_walls_around(x, y):
