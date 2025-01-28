@@ -34,7 +34,7 @@ def load_tiles(tile_name: str):
     tile_set[tile_name] = pygame.image.load("textures/Tile_" + str(tile_name) + ".png").convert_alpha()
     # Alpha can be modified for future implementations
     if DEPTH:
-        alpha = 128
+        alpha = 192
 
     tile_set[tile_name].set_alpha(alpha)
 
