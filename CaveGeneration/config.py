@@ -9,6 +9,7 @@ DEPTH = True # Show the previous map, emulating depth
 # Object Parameters
 #RADIUS = 7
 RADIUS = int(w/10) # Radius for chest to spawn
+CHEST_PROB = 0.1 # Probability for chest to spawn
 BAG_PROB = 0.05 # Probability for bags to spawn
 
 # Window sizes

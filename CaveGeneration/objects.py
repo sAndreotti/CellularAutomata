@@ -48,7 +48,8 @@ def place_chests():
                                 has_chest = has_chest or chest_grid[x + y * w]
 
                 if is_suitable and not has_chest:
-                    chest_grid[i + j * w] = terrain.tile_set["CHEST"]
+                    if random.random() < CHEST_PROB:
+                        chest_grid[i + j * w] = terrain.tile_set["CHEST"]
 
                 # BAG PLACING
                 # if it is a chest, then it has chance to spawn little bags
