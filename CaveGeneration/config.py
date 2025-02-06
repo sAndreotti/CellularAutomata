@@ -1,27 +1,31 @@
 # Constants
 
 # Map parameters
-w, h = 50, 50 # Number of cells
+w, h = 50, 50  # Number of cells
 GRID_WIDTH, GRID_HEIGHT = 600, 600  # Size of the grid area
-N_WALL = 5 # Number of wall to keep it
-DEPTH = True # Show the previous map, emulating depth
+INITIAL_PROB = 0.45  # Initial probability to spawn a wall
+DEPTH = False  # Show the previous map, emulating depth
+
+# Iteraction parameters
+RULE = 1
+UPDATE_MODE = "LINEAR"  # LINEAR = sequential update, RANDOM = Randomly update all cells
 
 # Object Parameters
-#RADIUS = 7
-RADIUS = int(w/10) # Radius for chest to spawn
-CHEST_PROB = 0.1 # Probability for chest to spawn
-BAG_PROB = 0.05 # Probability for bags to spawn
+# RADIUS = 7
+RADIUS = int(w / 10)  # Radius for chest to spawn
+CHEST_PROB = 0.1  # Probability for chest to spawn
+BAG_PROB = 0.45  # Probability for bags to spawn
 
 # Monsters Parameters
-MAX_MONSTERS = 5
-MONSTER_RADIUS = 2 # Radius for monster to spawn
-MONSTER_PROB = 0.3 # Probability to spawn a monster near chests
+MAX_MONSTERS = 3
+MONSTER_RADIUS = 3  # Radius for monster to spawn
+MONSTER_PROB = 0.2  # Probability to spawn a monster near chests
 
 # Window sizes
 BUTTON_WIDTH, BUTTON_HEIGHT = 160, 40  # Size of the button
 WINDOW_WIDTH = GRID_WIDTH + BUTTON_WIDTH + 20  # Total window width (grid + button + padding)
 WINDOW_HEIGHT = GRID_HEIGHT  # Window height
-TILE_SIZE = GRID_WIDTH // w # Size of a Tile
+TILE_SIZE = GRID_WIDTH // w  # Size of a Tile
 
 # Tiles Textures
 GROUND_BONES = 109
